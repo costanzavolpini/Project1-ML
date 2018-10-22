@@ -12,3 +12,5 @@ scripts/datas/sample-submission\.csv
 scripts/datas/test\.csv
 
 scripts/datas/train\.csv
+
+scripts/__pycache__/
