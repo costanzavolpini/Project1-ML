@@ -60,11 +60,11 @@ def stochastic_gradient_descent(y, tx, initial_w, batch_size, max_iters, gamma):
 # Least squares regression using normal equations (Costanza)
 def least_squares(y, tx):
     """This function return the optimal weights (using QR), and the mean-squared error"""
-    X = tx.T.dot(tx)
+    a = tx.T.dot(tx)
     b = tx.T.dot(y)
-    w_optimal = np.linalg.solve(X, b)
-    e = np.subtract(y, np.dot(tx, w_optimal))
-    return calculate_mse(e, y), w_optimal
+    w = np.linalg.solve(a, b)
+    loss = compute_loss(y, tx, w)
+    return loss, w
 
 # Ridge regression using normal equations (Costanza)
 def ridge_regression(y, tx, lambda_):
@@ -72,7 +72,9 @@ def ridge_regression(y, tx, lambda_):
     aI = 2 * tx.shape[0] * lambda_ * np.identity(tx.shape[1])
     a = tx.T.dot(tx) + aI
     b = tx.T.dot(y)
-    return np.linalg.solve(a, b)
+    w = np.linalg.solve(a, b)
+    loss = compute_loss(y, tx, w)
+    return loss, w
 
 # Logistic regression using gradient descent or SGD (Abranches)
 #TODO

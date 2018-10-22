@@ -30,18 +30,14 @@ def cross_validation(y, x, k_indices, k, degree, m, **args):
     y_test = y[test_indice]
     y_train = y[train_indice]
     x_test = x[test_indice]
-    x_tr = x[train_indice]
+    x_train = x[train_indice]
 
     # form data with polynomial degree
-    tx_train = build_poly(x_tr, degree)
+    tx_train = build_poly(x_train, degree)
     tx_test = build_poly(x_test, degree)
 
     # ridge regression methods used to calculate weights
-    losses, w = m(y_train, tx_train, **args)
-
-    # # calculate the loss for train and test data
-    # loss_train = np.sqrt(2 * compute_loss(y_train, tx_train, w))
-    # loss_test = np.sqrt(2 * compute_loss(y_test, tx_test, w))
+    loss, w = m(y_train, tx_train, **args)
 
     # predict the y given weight and data
     y_train_predicted = predict_labels(w, tx_train)
@@ -51,5 +47,4 @@ def cross_validation(y, x, k_indices, k, degree, m, **args):
     accuracy_train = calculate_accuracy(y_train_predicted, y_train)
     accuracy_test = calculate_accuracy(y_test_predicted, y_test)
 
-    # return loss_train, loss_test, w, accuracy_train, accuracy_test
-    return accuracy_train, accuracy_test
+    return loss, w, accuracy_train, accuracy_test, np.concatenate((y_test_predicted, y_train_predicted), axis=None)
