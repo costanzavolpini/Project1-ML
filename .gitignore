@@ -6,3 +6,9 @@ scripts/__pycache__/implementations\.cpython-36\.pyc
 scripts/__pycache__/proj1_helpers\.cpython-36\.pyc
 
 scripts/\.ipynb_checkpoints/Project1-checkpoint\.ipynb
+
+scripts/datas/sample-submission\.csv
+
+scripts/datas/test\.csv
+
+scripts/datas/train\.csv
