@@ -1,26 +1,10 @@
 # -*- coding: utf-8 -*-
 import numpy as np
+from helpers import *
 
 # TODO: Return type: Note that all functions should return: (w, loss), which is the last weight vector of the
 # method, and the corresponding loss value (cost function). Note that while in previous labs you might have
 # kept track of all encountered w for iterative methods, here we only want the last one.
-
-# Helper functions
-def calculate_mse(e, y):
-    """This function returns the mean-squared error given the error"""
-    return 1/(len(y)) * np.sum(e**2)
-
-def calculate_mae(e):
-    """Calculate the mae for vector e."""
-    return np.mean(np.abs(e))
-
-
-def compute_loss(y, tx, w):
-    """Calculate the loss using mse or mae.
-    """
-    e = y - tx.dot(w)
-    return calculate_mse(e, y)
-
 
 # Linear regression using gradient descent (Yousskit)
 def gradient_descent(y, tx, initial_w, max_iters, gamma):

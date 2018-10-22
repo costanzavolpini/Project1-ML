@@ -1,4 +1,6 @@
 import numpy as np
+from proj1_helpers import *
+from helpers import *
 
 def build_poly(x, degree):
     """polynomial basis functions for input data x, for j=0 up to j=degree."""
@@ -18,23 +20,36 @@ def build_k_indices(y, k_fold, seed):
     return np.array(k_indices)
 
 
-def cross_validation(y, x, k_indices, k, lambda_, degree):
-    """return the loss of ridge regression."""
+def cross_validation(y, x, k_indices, k, degree, m, **args):
+    """return the loss of ridge regression (of train and test data)."""
     # get k'th subgroup in test, others in train
-    te_indice = k_indices[k]
-    tr_indice = k_indices[~(np.arange(k_indices.shape[0]) == k)]
-    tr_indice = tr_indice.reshape(-1)
-    y_te = y[te_indice]
-    y_tr = y[tr_indice]
-    x_te = x[te_indice]
-    x_tr = x[tr_indice]
+    test_indice = k_indices[k]
+    train_indice = k_indices[~(np.arange(k_indices.shape[0]) == k)]
+    train_indice = train_indice.reshape(-1)
+
+    y_test = y[test_indice]
+    y_train = y[train_indice]
+    x_test = x[test_indice]
+    x_tr = x[train_indice]
+
     # form data with polynomial degree
-    tx_tr = build_poly(x_tr, degree)
-    tx_te = build_poly(x_te, degree)
-    # ridge regression
-    w = ridge_regression(y_tr, tx_tr, lambda_)
-    # calculate the loss for train and test data
-    err1 = y_tr - tx_tr.dot(w)
-    loss_tr = np.sqrt(2 * compute_loss(y_tr, tx_tr, w))
-    loss_te = np.sqrt(2 * compute_loss(y_te, tx_te, w))
-    return loss_tr, loss_te,w
+    tx_train = build_poly(x_tr, degree)
+    tx_test = build_poly(x_test, degree)
+
+    # ridge regression methods used to calculate weights
+    losses, w = m(y_train, tx_train, **args)
+
+    # # calculate the loss for train and test data
+    # loss_train = np.sqrt(2 * compute_loss(y_train, tx_train, w))
+    # loss_test = np.sqrt(2 * compute_loss(y_test, tx_test, w))
+
+    # predict the y given weight and data
+    y_train_predicted = predict_labels(w, tx_train)
+    y_test_predicted = predict_labels(w, tx_test)
+
+    # calculate the accuracy for train and test data
+    accuracy_train = calculate_accuracy(y_train_predicted, y_train)
+    accuracy_test = calculate_accuracy(y_test_predicted, y_test)
+
+    # return loss_train, loss_test, w, accuracy_train, accuracy_test
+    return accuracy_train, accuracy_test
