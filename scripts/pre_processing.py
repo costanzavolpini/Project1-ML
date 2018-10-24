@@ -15,8 +15,6 @@ def replace_missing_values(tx, new_values):
     x[indices] = np.take(new_values, indices[1])
     return x
 
-
-
 # Matrix Standardization
 # Preprocessing step to standardize the data, i.e. subtract the mean and divide by the standard deviation for each dimension. After this processing, each dimension has zero mean and unit variance.
 
