@@ -47,4 +47,4 @@ def cross_validation(y, x, k_indices, k, degree, m, **args):
     accuracy_train = calculate_accuracy(y_train_predicted, y_train)
     accuracy_test = calculate_accuracy(y_test_predicted, y_test)
 
-    return loss, w, accuracy_train, accuracy_test, np.concatenate((y_test_predicted, y_train_predicted), axis=None)
+    return loss, w, accuracy_train, accuracy_test
