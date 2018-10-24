@@ -20,10 +20,7 @@ def replace_missing_values(tx, new_values):
 # Matrix Standardization
 # Preprocessing step to standardize the data, i.e. subtract the mean and divide by the standard deviation for each dimension. After this processing, each dimension has zero mean and unit variance.
 
-# def standardize(x):
-#     centered_data = x - np.mean(x, axis=0)
-#     std_data = centered_data / np.std(centered_data, axis=0)
-#     return std_data
-
-# std_data_tx = standardize(tx)
-# print(std_data_tx)
+def standardize(x):
+    centered_data = x - np.mean(x, axis=0)
+    std_data = centered_data / np.std(centered_data, axis=0)
+    return std_data
