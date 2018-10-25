@@ -24,3 +24,9 @@ def generate_4_sets_looking_on_jetnum(tx):
 
     return features_jet_0, features_jet_1, features_jet_2, features_jet_3
 
+def columns_contains_just_missing_values(s):
+    columns_to_remove = []
+    for i in range (0, 30):
+        if(np.all(s[:, i] == -999.)):
+            columns_to_remove.append(i)
+    return columns_to_remove

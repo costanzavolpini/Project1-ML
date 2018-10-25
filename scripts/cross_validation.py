@@ -36,7 +36,7 @@ def cross_validation(y, x, k_indices, k, degree, m, **args):
     tx_train = build_poly(x_train, degree)
     tx_test = build_poly(x_test, degree)
 
-    # ridge regression methods used to calculate weights
+    # methods used to calculate weights
     loss, w = m(y_train, tx_train, **args)
 
     # predict the y given weight and data
