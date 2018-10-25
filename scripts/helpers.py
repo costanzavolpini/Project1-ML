@@ -22,3 +22,10 @@ def calculate_accuracy(preds, vals):
             acc += 1
     accuracy = acc / len(vals)
     return accuracy
+
+def compute_gradient(y, tx, w):
+    """Compute the gradient."""
+    err = y - tx.dot(w)
+    grad = -tx.T.dot(err) / len(err)
+    return grad, err
+
