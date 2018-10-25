@@ -6,7 +6,7 @@ from helpers import *
 # method, and the corresponding loss value (cost function). Note that while in previous labs you might have
 # kept track of all encountered w for iterative methods, here we only want the last one.
 
-# Linear regression using gradient descent (Yousskit)
+# Linear regression using gradient descent
 def gradient_descent(y, tx, initial_w, max_iters, gamma):
     """Gradient descent algorithm."""
     # Define parameters to store w and loss
@@ -27,7 +27,7 @@ def gradient_descent(y, tx, initial_w, max_iters, gamma):
 
     return losses, ws
 
-# Linear regression using stochastic gradient descent (Abranches)
+# Linear regression using stochastic gradient descent
 def compute_stoch_gradient(y, tx, w):
     """Compute a stochastic gradient from just few examples n and their corresponding y_n labels."""
     err = y - tx.dot(w)
@@ -57,16 +57,19 @@ def stochastic_gradient_descent(y, tx, initial_w, batch_size, max_iters, gamma):
               bi=n_iter, ti=max_iters - 1, l=loss, w0=w[0], w1=w[1]))
     return losses, ws
 
-# Least squares regression using normal equations (Costanza)
+# Least squares regression using normal equations
 def least_squares(y, tx):
     """This function return the optimal weights (using QR), and the mean-squared error"""
     a = tx.T.dot(tx)
     b = tx.T.dot(y)
-    w = np.linalg.solve(a, b)
+    try:
+        w = np.linalg.solve(a, b)
+    except: # case singular matrix
+        w = np.linalg.lstsq(a, b)[0]
     loss = compute_loss(y, tx, w)
     return loss, w
 
-# Ridge regression using normal equations (Costanza)
+# Ridge regression using normal equations
 def ridge_regression(y, tx, lambda_):
     """implement ridge regression."""
     aI = 2 * tx.shape[0] * lambda_ * np.identity(tx.shape[1])
@@ -76,8 +79,8 @@ def ridge_regression(y, tx, lambda_):
     loss = compute_loss(y, tx, w)
     return loss, w
 
-# Logistic regression using gradient descent or SGD (Abranches)
+# Logistic regression using gradient descent or SGD
 #TODO
 
-# Regularized logistic regression using gradient descent or SGD (Yousskit)
+# Regularized logistic regression using gradient descent or SGD
 #TODO
