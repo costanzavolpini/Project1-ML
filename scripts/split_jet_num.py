@@ -30,3 +30,11 @@ def columns_contains_just_missing_values(s):
         if(np.all(s[:, i] == -999.)):
             columns_to_remove.append(i)
     return columns_to_remove
+
+
+def columns_contains_same_value(s):
+    columns_to_remove = []
+    for i in range (0, 30):
+        if(np.all(s[:, i] == s[0][i])):
+            columns_to_remove.append(i)
+    return columns_to_remove
