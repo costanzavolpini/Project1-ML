@@ -39,9 +39,6 @@ def cross_validation(y, x, k_indices, k, degree, m, **args):
     # methods used to calculate weights
     loss, w = m(y_train, tx_train, **args)
 
-    print("w after", w)
-    print(tx_train.shape)
-
     # predict the y given weight and data
     y_train_predicted = predict_labels(w, tx_train)
     y_test_predicted = predict_labels(w, tx_test)
