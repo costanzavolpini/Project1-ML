@@ -10,8 +10,9 @@ from helpers import *
 def gradient_descent(y, tx, initial_w, max_iters, gamma):
     """Gradient descent algorithm."""
     # Define parameters to store w and loss
-    ws = [initial_w]
-    losses = []
+    if(initial_w.shape[0] != tx.shape[1]):
+          initial_w = np.zeros(tx.shape[1])
+    loss = 0
     w = initial_w
     for n_iter in range(max_iters):
         # compute loss, gradient
@@ -19,13 +20,7 @@ def gradient_descent(y, tx, initial_w, max_iters, gamma):
         loss = calculate_mse(err, y)
         # gradient w by descent update
         w = w - gamma * grad
-        # store w and loss
-        ws.append(w)
-        losses.append(loss)
-        print("Gradient Descent({bi}/{ti}): loss={l}, w0={w0}, w1={w1}".format(
-              bi=n_iter, ti=max_iters - 1, l=loss, w0=w[0], w1=w[1]))
-
-    return losses, ws
+    return loss, w
 
 # Linear regression using stochastic gradient descent
 def compute_stoch_gradient(y, tx, w):
