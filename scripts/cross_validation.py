@@ -39,7 +39,7 @@ def cross_validation(y, x, k_indices, k, degree, m, **args):
     # methods used to calculate weights
     loss, w = m(y_train, tx_train, **args)
 
-    print(w)
+    print("w after", w)
     print(tx_train.shape)
 
     # predict the y given weight and data
