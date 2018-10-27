@@ -6,14 +6,12 @@ from pre_processing import *
 from split_jet_num import generate_4_sets_looking_on_jetnum, columns_contains_just_missing_values, columns_contains_same_value, reasseambly_tx_labels_ids
 
 
-def divide_dataset_looking_jetnum_and_remove_features(y, tx, ids, tx_test, ids_test):
+def divide_dataset_looking_jetnum_and_remove_features(y, tx, ids):
     """ Divide the dataset looking on jet_num feature (column 22 of tx).
         Input:
             y: labels
             tx: features
             ids: event ids
-            tx_test: test features
-            ids_test: test event ids
         Output:
             tx_dropped_columns: features without columns containing just constant values
             features_dropped_n: features without columns containing just constant values where jet_num is equal to n
@@ -44,7 +42,7 @@ def divide_dataset_looking_jetnum_and_remove_features(y, tx, ids, tx_test, ids_t
 
 
 # Execute a method with or without cross_validation
-def execute_one_method(y, tx, ids, tx_test, ids_test, method_name, cross_validation_flag, m, **args):
+def execute_one_method(y, tx, ids, method_name, cross_validation_flag, m, **args):
     if(cross_validation_flag):
         # can be changed
         seed = 19
@@ -111,26 +109,26 @@ def replace_set_normalize(tx):
     return tx_std_data_replaced_by_0
 
 # Execute a method with or without cross_validation and with a new datased where missing values are replaced by mean
-def execute_one_method_mean(y, tx, ids, tx_test, ids_test, method_name, cross_validation_flag, m, **args):
+def execute_one_method_mean(y, tx, ids, method_name, cross_validation_flag, m, **args):
     accuracy, method_name, w = execute_one_method(y, replace_set_mean(tx), ids, replace_set_mean(tx_test), ids_test, method_name, cross_validation_flag, m, **args)
     return accuracy, method_name, w
 
 # Execute a method with or without cross_validation and with a new datased where missing values are replaced by median
-def execute_one_method_median(y, tx, ids, tx_test, ids_test, method_name, cross_validation_flag, m, **args):
+def execute_one_method_median(y, tx, ids, method_name, cross_validation_flag, m, **args):
     accuracy, method_name, w = execute_one_method(y, replace_set_median(tx), ids, replace_set_median(tx_test), ids_test, method_name, cross_validation_flag, m, **args)
     return accuracy, method_name, w
 
 # Execute a method with or without cross_validation and with a new datased where missing values are normalized
-def execute_one_method_normalized(y, tx, ids, tx_test, ids_test, method_name, cross_validation_flag, m, **args):
+def execute_one_method_normalized(y, tx, ids, method_name, cross_validation_flag, m, **args):
     accuracy, method_name, w = execute_one_method(y, replace_set_normalize(tx), ids, replace_set_normalize(tx_test), ids_test, method_name, cross_validation_flag, m, **args)
     return accuracy, method_name, w
 
-def execute_all_methods(y, tx, ids, tx_test, ids_test, cross_validation_flag, **args):
-    accuracy1, method_name1, w1 = execute_one_method(y, tx, ids, tx_test, ids_test, "1. LEAST SQUARE", cross_validation_flag, least_squares)
+def execute_all_methods(y, tx, ids, cross_validation_flag, **args):
+    accuracy1, method_name1, w1 = execute_one_method(y, tx, ids, "1. LEAST SQUARE", cross_validation_flag, least_squares)
     max_accuracy = accuracy1
     method_name_selected = method_name1
     w_final = w1
-    accuracy2, method_name2, w2 = execute_one_method(y, tx, ids, tx_test, ids_test, "2. RIDGE REGRESSION", cross_validation_flag, ridge_regression, **args)
+    accuracy2, method_name2, w2 = execute_one_method(y, tx, ids, "2. RIDGE REGRESSION", cross_validation_flag, ridge_regression, **args)
     if(accuracy2 > accuracy1):
         max_accuracy = accuracy2
         method_name_selected = method_name2
@@ -138,21 +136,21 @@ def execute_all_methods(y, tx, ids, tx_test, ids_test, cross_validation_flag, **
     return max_accuracy, method_name_selected, w_final
     # ADD OTHER METHODS!!!!!!!!!
 
-def execute_all_methods_median(y, tx, ids, tx_test, ids_test, cross_validation_flag, **args):
+def execute_all_methods_median(y, tx, ids, cross_validation_flag, **args):
     # Find median and replace missing values with median
     tx_m = replace_set_median(tx)
     tx_test_m = replace_set_median(tx_test)
     acc, method_selec, w = execute_all_methods(y, tx_m, ids, tx_test_m, ids_test, cross_validation_flag, **args)
     return acc, method_selec, w
 
-def execute_all_methods_mean(y, tx, ids, tx_test, ids_test, cross_validation_flag, **args):
+def execute_all_methods_mean(y, tx, ids, cross_validation_flag, **args):
     # Find mean and replace missing values with mean
     tx_m = replace_set_mean(tx)
     tx_test_m = replace_set_mean(tx_test)
     acc, method_selec, w = execute_all_methods(y, tx_m, ids, tx_test_m, ids_test, cross_validation_flag, **args)
     return acc, method_selec, w
 
-def execute_all_methods_normalize(y, tx, ids, tx_test, ids_test, cross_validation_flag, **args):
+def execute_all_methods_normalize(y, tx, ids, cross_validation_flag, **args):
     # Normalize replacing missing values with zero
     tx_m = replace_set_normalize(tx)
     tx_test_m = replace_set_normalize(tx_test)
