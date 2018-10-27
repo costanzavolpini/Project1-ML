@@ -160,9 +160,25 @@ def execute_all_methods_normalize(y, tx, ids, tx_test, ids_test, cross_validatio
     return acc, method_selec, w
 
 def generate_submission(tx_old, tx0, tx1, tx2, tx3, ids0, ids1, ids2, ids3, w0, w1, w2, w3, name, degree):
-    tx, ids, w = reasseambly_tx_labels_ids(tx_old, tx0, tx1, tx2, tx3, ids0, ids1, ids2, ids3, w0, w1, w2, w3)
-    y_test_predicted = []
-    test_poly = build_poly(tx, degree)
-    y_test_predicted = predict_labels(w, test_poly)
-    create_csv_submission(ids, y_test_predicted, name)
-    return True
+    # reasseambly_tx_labels_ids(tx_old, tx0, tx1, tx2, tx3, ids0, ids1, ids2, ids3, w0, w1, w2, w3)
+    # tx, ids, w = reasseambly_tx_labels_ids(tx_old, tx0, tx1, tx2, tx3, ids0, ids1, ids2, ids3, w0, w1, w2, w3)
+    y_test_predicted0 = []
+    test_poly0 = build_poly(tx0, degree)
+    y_test_predicted0 = predict_labels(w0, test_poly0)
+
+    y_test_predicted1 = []
+    test_poly1 = build_poly(tx1, degree)
+    y_test_predicted1 = predict_labels(w1, test_poly1)
+
+    y_test_predicted2 = []
+    test_poly2 = build_poly(tx2, degree)
+    y_test_predicted2 = predict_labels(w2, test_poly2)
+
+    y_test_predicted3 = []
+    test_poly3 = build_poly(tx3, degree)
+    y_test_predicted3 = predict_labels(w3, test_poly3)
+
+    id_final = np.concatenate((ids0, ids1, ids2, ids3), axis=0)
+    y_pred_final = np.concatenate((y_test_predicted0, y_test_predicted1, y_test_predicted2, y_test_predicted3), axis=0)
+    create_csv_submission(id_final, y_pred_final, name)
+    # return True
