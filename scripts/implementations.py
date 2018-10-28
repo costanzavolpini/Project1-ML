@@ -2,10 +2,6 @@
 import numpy as np
 from helpers import *
 
-# TODO: Return type: Note that all functions should return: (w, loss), which is the last weight vector of the
-# method, and the corresponding loss value (cost function). Note that while in previous labs you might have
-# kept track of all encountered w for iterative methods, here we only want the last one.
-
 # Linear regression using gradient descent
 def least_squares_GD(y, tx, initial_w, max_iters, gamma):
     """Gradient descent algorithm."""
@@ -14,6 +10,7 @@ def least_squares_GD(y, tx, initial_w, max_iters, gamma):
           initial_w = initialize_weight(tx.shape[1])
     losses = []
     w = initial_w
+    count = 0
     for n_iter in range(max_iters):
         # compute loss, gradient
         grad, err = compute_gradient(y, tx, w)
@@ -23,7 +20,9 @@ def least_squares_GD(y, tx, initial_w, max_iters, gamma):
         # converge criterion
         losses.append(loss)
         if len(losses) > 1 and np.abs(losses[-1] - losses[-2]) < 1e-8:
-            break
+            count += 1
+            if count == 10:
+                break
     return loss, w
 
 # Linear regression using stochastic gradient descent
@@ -35,6 +34,7 @@ def least_squares_SGD(y, tx, initial_w, max_iters, gamma):
     losses = []
     w = initial_w
     size = 30
+    count = 0
 
     for n_iter in range(max_iters):
         for y_batch, tx_batch in batch_iter(y, tx, batch_size=size, num_batches=1):
@@ -45,7 +45,9 @@ def least_squares_SGD(y, tx, initial_w, max_iters, gamma):
             w = w - gamma * grad
             losses.append(loss)
             if len(losses) > 1 and np.abs(losses[-1] - losses[-2]) < 1e-8:
-                break
+                count += 1
+                if count == 10:
+                    break
     return loss, w
 
 # Least squares regression using normal equations
@@ -60,8 +62,8 @@ def least_squares(y, tx):
     loss = compute_loss(y, tx, w)
     return loss, w
 
-# Ridge regression using normal equations //TODO: remove args!
-def ridge_regression(y, tx, lambda_, **args):
+# Ridge regression using normal equations
+def ridge_regression(y, tx, lambda_):
     """ridge regression."""
     aI = 2 * tx.shape[0] * lambda_ * np.identity(tx.shape[1])
     a = tx.T.dot(tx) + aI
@@ -79,6 +81,7 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
 
     y = y.copy()
     y[y == -1] = 0
+    count = 0
 
     # start the logistic regression
     for iter in range(max_iters):
@@ -88,7 +91,9 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
         # converge criterion
         losses.append(loss)
         if len(losses) > 1 and np.abs(losses[-1] - losses[-2]) < 1e-8:
-            break
+            count += 1
+            if count == 10:
+                break
 
     return loss, w
 
