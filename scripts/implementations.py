@@ -7,19 +7,21 @@ from helpers import *
 # kept track of all encountered w for iterative methods, here we only want the last one.
 
 # Linear regression using gradient descent
-def gradient_descent(y, tx, initial_w, max_iters, gamma):
+def least_squares_GD(y, tx, initial_w, max_iters, gamma):
     """Gradient descent algorithm."""
     # Define parameters to store w and loss
-    if(initial_w.shape[0] != tx.shape[1]):
-          initial_w = np.zeros(tx.shape[1])
+    if(initial_w == None):
+          initial_w = initialize_weight(tx.shape[1])
     loss = 0
     w = initial_w
+    print(tx.shape, y.shape)
     for n_iter in range(max_iters):
         # compute loss, gradient
         grad, err = compute_gradient(y, tx, w)
-        loss = calculate_mse(err, y)
         # gradient w by descent update
         w = w - gamma * grad
+        print("gradient", gamma, grad)
+    loss = calculate_mse(err, y)
     return loss, w
 
 # Linear regression using stochastic gradient descent
@@ -32,6 +34,8 @@ def compute_stoch_gradient(y, tx, w):
 def stochastic_gradient_descent(y, tx, initial_w, batch_size, max_iters, gamma):
     """Stochastic gradient descent."""
     # Define parameters to store w and loss
+    if(initial_w == None):
+        initial_w = initialize_weight(tx.shape[1])
     ws = [initial_w]
     losses = []
     w = initial_w
@@ -65,7 +69,7 @@ def least_squares(y, tx):
     return loss, w
 
 # Ridge regression using normal equations
-def ridge_regression(y, tx, lambda_):
+def ridge_regression(y, tx, lambda_, **args):
     """ridge regression."""
     aI = 2 * tx.shape[0] * lambda_ * np.identity(tx.shape[1])
     a = tx.T.dot(tx) + aI

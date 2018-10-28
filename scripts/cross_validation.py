@@ -1,6 +1,7 @@
 import numpy as np
 from proj1_helpers import *
 from helpers import *
+from execute_code import replace_set_normalize
 
 def build_poly(x, degree):
     """polynomial basis functions for input data x, for j=0 up to j=degree."""
@@ -35,6 +36,9 @@ def cross_validation(y, x, k_indices, k, degree, m, **args):
     # form data with polynomial degree
     tx_train = build_poly(x_train, degree)
     tx_test = build_poly(x_test, degree)
+
+    tx_train = replace_set_normalize(tx_train)
+    tx_test = replace_set_normalize(tx_test)
 
     # methods used to calculate weights
     loss, w = m(y_train, tx_train, **args)

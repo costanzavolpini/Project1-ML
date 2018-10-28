@@ -3,7 +3,7 @@ from implementations import *
 from proj1_helpers import *
 from cross_validation import *
 from pre_processing import *
-from split_jet_num import generate_4_sets_looking_on_jetnum, columns_contains_just_missing_values, columns_contains_same_value, reasseambly_tx_labels_ids
+from split_jet_num import generate_4_sets_looking_on_jetnum, columns_contains_just_missing_values, columns_contains_same_value
 
 
 def divide_dataset_looking_jetnum_and_remove_features(y, tx, ids):
@@ -128,11 +128,15 @@ def execute_all_methods(y, tx, ids, cross_validation_flag, **args):
     max_accuracy = accuracy1
     method_name_selected = method_name1
     w_final = w1
-    accuracy2, method_name2, w2 = execute_one_method(y, tx, ids, "2. RIDGE REGRESSION", cross_validation_flag, ridge_regression, **args)
+
+    accuracy2, method_name2, w2 = execute_one_method(y, tx, ids, "2. RIDGE REGRESSION", cross_validation_flag, ridge_regression, lambda_=args["lambda_"])
     if(accuracy2 > accuracy1):
         max_accuracy = accuracy2
         method_name_selected = method_name2
         w_final = w2
+
+    accuracy3, method_name3, w3 = execute_one_method(y, tx, ids, "3. GRADIENT DESCENT", cross_validation_flag, least_squares_GD, initial_w=args["initial_w"], max_iters=args["max_iters"], gamma=args["gamma"])
+
     return max_accuracy, method_name_selected, w_final
     # ADD OTHER METHODS!!!!!!!!!
 
@@ -158,8 +162,6 @@ def execute_all_methods_normalize(y, tx, ids, cross_validation_flag, **args):
     return acc, method_selec, w
 
 def generate_submission(tx_old, tx0, tx1, tx2, tx3, ids0, ids1, ids2, ids3, w0, w1, w2, w3, name, degree):
-    # reasseambly_tx_labels_ids(tx_old, tx0, tx1, tx2, tx3, ids0, ids1, ids2, ids3, w0, w1, w2, w3)
-    # tx, ids, w = reasseambly_tx_labels_ids(tx_old, tx0, tx1, tx2, tx3, ids0, ids1, ids2, ids3, w0, w1, w2, w3)
     y_test_predicted0 = []
     test_poly0 = build_poly(tx0, degree)
     y_test_predicted0 = predict_labels(w0, test_poly0)
@@ -179,4 +181,3 @@ def generate_submission(tx_old, tx0, tx1, tx2, tx3, ids0, ids1, ids2, ids3, w0, 
     id_final = np.concatenate((ids0, ids1, ids2, ids3), axis=0)
     y_pred_final = np.concatenate((y_test_predicted0, y_test_predicted1, y_test_predicted2, y_test_predicted3), axis=0)
     create_csv_submission(id_final, y_pred_final, name)
-    # return True

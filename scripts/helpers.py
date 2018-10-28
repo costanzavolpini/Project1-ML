@@ -26,5 +26,10 @@ def calculate_accuracy(preds, vals):
 def compute_gradient(y, tx, w):
     """Compute the gradient."""
     err = y - tx.dot(w)
+    print("err", err.shape, err)
     grad = -tx.T.dot(err) / len(err)
     return grad, err
+
+def initialize_weight(n):
+    return np.zeros(n)
+    return np.random.random(n)*2-1
