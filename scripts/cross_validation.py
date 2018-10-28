@@ -4,6 +4,7 @@ from helpers import *
 from execute_code import replace_set_normalize
 
 def build_poly(x, degree):
+    # FEATURE AUGMENTATION
     """polynomial basis functions for input data x, for j=0 up to j=degree."""
     poly = np.ones((len(x), 1))
     for deg in range(1, degree+1):

@@ -54,7 +54,7 @@ def least_squares(y, tx):
     loss = compute_loss(y, tx, w)
     return loss, w
 
-# Ridge regression using normal equations
+# Ridge regression using normal equations //TODO: remove args!
 def ridge_regression(y, tx, lambda_, **args):
     """ridge regression."""
     aI = 2 * tx.shape[0] * lambda_ * np.identity(tx.shape[1])
@@ -65,7 +65,24 @@ def ridge_regression(y, tx, lambda_, **args):
     return loss, w
 
 # Logistic regression using gradient descent or SGD
-#TODO
+def logistic_regression(y, tx, initial_w, max_iters, gamma):
+    if(initial_w == None):
+        initial_w = initialize_weight(tx.shape[1])
+    threshold = 1e-8
+    losses = []
+    w = initial_w
+
+    # start the logistic regression
+    for iter in range(max_iters):
+        # get loss and update w.
+        loss, w = learning_by_gradient_descent(y, tx, w, gamma)
+
+        # converge criterion
+        losses.append(loss)
+        if len(losses) > 1 and np.abs(losses[-1] - losses[-2]) < threshold:
+            break
+
+    return loss, w
 
 # Regularized logistic regression using gradient descent or SGD
 #TODO

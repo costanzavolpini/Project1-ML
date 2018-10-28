@@ -1,5 +1,9 @@
 import numpy as np
 
+def sigmoid(x):
+    s = 1/(1+np.exp(-x))
+    return s
+
 def calculate_mse(e, y):
     """This function returns the mean-squared error given the error"""
     return 1/(len(y)) * np.sum(e**2)
@@ -33,6 +37,17 @@ def initialize_weight(n):
     return np.random.random(n)*2-1
 
 
+def calculate_loss_sigmoid(y, tx, w):
+    """compute the cost by negative log likelihood."""
+    pred = sigmoid(tx.dot(w))
+    loss = y.T.dot(np.log(pred)) + (1 - y).T.dot(np.log(1 - pred))
+    return np.squeeze(- loss)
+
+def calculate_gradient_sigmoid(y, tx, w):
+    """compute the gradient of loss."""
+    pred = sigmoid(tx.dot(w))
+    grad = tx.T.dot(pred - y)
+    return grad
 
 def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
     """
@@ -65,3 +80,14 @@ def compute_stoch_gradient(y, tx, w):
     err = y - tx.dot(w)
     grad = -tx.T.dot(err) / len(err)
     return grad, err
+
+
+def learning_by_gradient_descent(y, tx, w, gamma):
+    """
+    Do one step of gradient descen using logistic regression.
+    Return the loss and the updated w.
+    """
+    loss = calculate_loss_sigmoid(y, tx, w)
+    grad = calculate_gradient_sigmoid(y, tx, w)
+    w -= gamma * grad
+    return loss, w

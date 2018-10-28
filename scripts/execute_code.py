@@ -143,6 +143,16 @@ def execute_all_methods(y, tx, ids, cross_validation_flag, **args):
         w_final = w3
 
     accuracy4, method_name4, w4 = execute_one_method(y, tx, ids, "4. STOCHASTIC GRADIENT", cross_validation_flag, least_squares_SGD, initial_w=args["initial_w"], max_iters=args["max_iters"], gamma=args["gamma"])
+    if(accuracy4 > max_accuracy):
+        max_accuracy = accuracy4
+        method_name_selected = method_name4
+        w_final = w4
+
+    accuracy5, method_name5, w5 = execute_one_method(y, tx, ids, "5. LOGISTIC REGRESSION", cross_validation_flag, logistic_regression, initial_w=args["initial_w"], max_iters=args["max_iters"], gamma=args["gamma"])
+    if(accuracy5 > max_accuracy):
+        max_accuracy = accuracy5
+        method_name_selected = method_name5
+        w_final = w5
 
     return max_accuracy, method_name_selected, w_final
     # ADD OTHER METHODS!!!!!!!!!
