@@ -12,14 +12,18 @@ def least_squares_GD(y, tx, initial_w, max_iters, gamma):
     # Define parameters to store w and loss
     if(initial_w == None):
           initial_w = initialize_weight(tx.shape[1])
-    loss = 0
+    losses = []
     w = initial_w
     for n_iter in range(max_iters):
         # compute loss, gradient
         grad, err = compute_gradient(y, tx, w)
+        loss = calculate_mse(err, y)
         # gradient w by descent update
         w = w - gamma * grad
-    loss = calculate_mse(err, y)
+        # converge criterion
+        losses.append(loss)
+        if len(losses) > 1 and np.abs(losses[-1] - losses[-2]) < 1e-8:
+            break
     return loss, w
 
 # Linear regression using stochastic gradient descent
@@ -28,18 +32,20 @@ def least_squares_SGD(y, tx, initial_w, max_iters, gamma):
     # Define parameters to store w and loss
     if(initial_w == None):
         initial_w = initialize_weight(tx.shape[1])
-    loss = 0
+    losses = []
     w = initial_w
     size = 30
 
     for n_iter in range(max_iters):
         for y_batch, tx_batch in batch_iter(y, tx, batch_size=size, num_batches=1):
             # compute a stochastic gradient and loss
+            loss = compute_loss(y, tx, w)
             grad, _ = compute_stoch_gradient(y_batch, tx_batch, w)
             # update w through the stochastic gradient update
             w = w - gamma * grad
-
-    loss = compute_loss(y, tx, w)
+            losses.append(loss)
+            if len(losses) > 1 and np.abs(losses[-1] - losses[-2]) < 1e-8:
+                break
     return loss, w
 
 # Least squares regression using normal equations

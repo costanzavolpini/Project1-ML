@@ -39,7 +39,7 @@ def initialize_weight(n):
 def calculate_log_likelihood(y, tx, w):
     """compute the cost by negative log likelihood."""
     pred = sigmoid(tx.dot(w))
-    loss = y.T.dot(np.log(pred)) + (1 - y).T.dot(np.log(1 - pred))
+    loss = y.T.dot(np.log(pred + 1e-5)) + (1 - y).T.dot(np.log(1 - pred + 1e-5))
     return np.squeeze(- loss)
 
 def compute_gradient_log_likelihood(y, tx, w):
