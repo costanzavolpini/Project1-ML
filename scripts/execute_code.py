@@ -4,7 +4,7 @@ from proj1_helpers import *
 from cross_validation import *
 from helpers import *
 from pre_processing import *
-from split_jet_num import generate_4_sets_looking_on_jetnum, columns_contains_just_missing_values, columns_contains_same_value
+from split_jet_num import generate_4_sets_looking_on_jetnum, columns_contains_same_value
 
 
 def divide_dataset_looking_jetnum_and_remove_features(y, tx, ids):
@@ -41,7 +41,7 @@ def divide_dataset_looking_jetnum_and_remove_features(y, tx, ids):
     return features_dropped_0, features_dropped_1, features_dropped_2, features_dropped_3, y_jet_0, y_jet_1, y_jet_2, y_jet_3, ids_jet_0, ids_jet_1, ids_jet_2, ids_jet_3
 
 
-
+# Execute a method with or without cross_validation
 def execute_one_method(y, tx, ids, method_name, cross_validation_flag, m, **args):
     """ Execute one method and return the accuracy and weight.
         Input:

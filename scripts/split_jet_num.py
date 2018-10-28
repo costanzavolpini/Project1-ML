@@ -80,7 +80,7 @@ def columns_contains_same_value(s):
 		columns_to_remove: array of features "ids" containing constant value
 	"""
 	columns_to_remove = []
-	for i in range (0, 30):
-		if(np.all(s[:, i] == s[0][i])):
-			columns_to_remove.append(i)
+	for col in range(len(s[0])):
+		if len(np.unique(s[:,col])) == 1:
+			columns_to_remove.append(col)
 	return columns_to_remove
