@@ -4,15 +4,6 @@ from helpers import *
 from execute_code import replace_set_normalize
 from implementations import logistic_regression, reg_logistic_regression
 
-def build_poly(x, degree):
-    # FEATURE AUGMENTATION
-    """polynomial basis functions for input data x, for j=0 up to j=degree."""
-    poly = np.ones((len(x), 1))
-    for deg in range(1, degree+1):
-        poly = np.c_[poly, np.power(x, deg)]
-    return poly
-
-
 def build_k_indices(y, k_fold, seed):
     """build k indices for k-fold."""
     num_row = y.shape[0]
@@ -26,13 +17,9 @@ def build_k_indices(y, k_fold, seed):
 def cross_validation(y, x, k_indices, k, degree, m, **args):
     """return the loss of ridge regression (of train and test data)."""
     # get k'th subgroup in test, others in train
-    y = y.copy()
     test_indice = k_indices[k]
     train_indice = k_indices[~(np.arange(k_indices.shape[0]) == k)]
     train_indice = train_indice.reshape(-1)
-
-    if(m is logistic_regression or m is reg_logistic_regression):
-        y[y == -1] = 0
 
     y_test = y[test_indice]
     y_train = y[train_indice]
@@ -49,14 +36,9 @@ def cross_validation(y, x, k_indices, k, degree, m, **args):
     # methods used to calculate weights
     loss, w = m(y_train, tx_train, **args)
 
-    if(m is logistic_regression or m is reg_logistic_regression):
-        # predict the y given weight and data
-        y_train_predicted = predict_labels_logistic(w, tx_train)
-        y_test_predicted = predict_labels_logistic(w, tx_test)
-    else:
-        # predict the y given weight and data
-        y_train_predicted = predict_labels(w, tx_train)
-        y_test_predicted = predict_labels(w, tx_test)
+    # predict the y given weight and data
+    y_train_predicted = predict_labels(w, tx_train)
+    y_test_predicted = predict_labels(w, tx_test)
 
     # calculate the accuracy for train and test data
     accuracy_train = calculate_accuracy(y_train_predicted, y_train)

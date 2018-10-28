@@ -97,3 +97,11 @@ def penalized_logistic_regression(y, tx, w, lambda_):
     loss = calculate_log_likelihood(y,tx,w) + lambda_ * np.squeeze(w.T.dot(w))
     gradient = compute_gradient_log_likelihood(y, tx, w) + 2 * lambda_ * w
     return loss, gradient
+
+def build_poly(x, degree):
+    # FEATURE AUGMENTATION
+    """polynomial basis functions for input data x, for j=0 up to j=degree."""
+    poly = np.ones((len(x), 1))
+    for deg in range(1, degree+1):
+        poly = np.c_[poly, np.power(x, deg)]
+    return poly

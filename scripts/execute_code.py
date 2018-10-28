@@ -80,18 +80,10 @@ def execute_one_method(y, tx, ids, method_name, cross_validation_flag, m, **args
         print("Accuracy train, mean: %f, min value: %f, max value: %f \n" %(mean_accuracy_train, min_accuracy_train, max_accuracy_train))
         return mean_accuracy_train, method_name, w
     else:
-
-        y = y.copy()
-
-        if(m is logistic_regression or m is reg_logistic_regression):
-            y[y == -1] = 0
         loss, w = m(y, tx, **args)
 
         # predict the y given weight and data
-        if(m is logistic_regression or m is reg_logistic_regression):
-            y_predicted = predict_labels_logistic(w, tx)
-        else:
-            y_predicted = predict_labels(w, tx)
+        y_predicted = predict_labels(w, tx)
 
         # calculate the accuracy for train and test data
         accuracy_train = calculate_accuracy(y_predicted, y)

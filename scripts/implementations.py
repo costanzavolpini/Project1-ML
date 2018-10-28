@@ -68,9 +68,11 @@ def ridge_regression(y, tx, lambda_, **args):
 def logistic_regression(y, tx, initial_w, max_iters, gamma):
     if(initial_w == None):
         initial_w = initialize_weight(tx.shape[1])
-    threshold = 1e-8
     losses = []
     w = initial_w
+
+    y = y.copy()
+    y[y == -1] = 0
 
     # start the logistic regression
     for iter in range(max_iters):
@@ -79,7 +81,7 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
 
         # converge criterion
         losses.append(loss)
-        if len(losses) > 1 and np.abs(losses[-1] - losses[-2]) < threshold:
+        if len(losses) > 1 and np.abs(losses[-1] - losses[-2]) < 1e-8:
             break
 
     return loss, w
@@ -90,12 +92,12 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
     Do one step of gradient descent, using the penalized logistic regression.
     Return the loss and updated w.
     """
+    y = y.copy()
+    y[y == -1] = 0
     if(initial_w == None):
         initial_w = initialize_weight(tx.shape[1])
     w = initial_w
     loss, gradient = penalized_logistic_regression(y, tx, w, lambda_)
-    # norm_gradient = np.linalg.norm(gradient)
-    # gamma = gamma / (norm_gradient)
 
     w = w - gamma * gradient
     return loss, w
