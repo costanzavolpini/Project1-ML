@@ -2,6 +2,7 @@ import numpy as np
 from implementations import *
 from proj1_helpers import *
 from cross_validation import *
+from helpers import *
 from pre_processing import *
 from split_jet_num import generate_4_sets_looking_on_jetnum, columns_contains_just_missing_values, columns_contains_same_value
 
@@ -130,12 +131,18 @@ def execute_all_methods(y, tx, ids, cross_validation_flag, **args):
     w_final = w1
 
     accuracy2, method_name2, w2 = execute_one_method(y, tx, ids, "2. RIDGE REGRESSION", cross_validation_flag, ridge_regression, lambda_=args["lambda_"])
-    if(accuracy2 > accuracy1):
+    if(accuracy2 > max_accuracy):
         max_accuracy = accuracy2
         method_name_selected = method_name2
         w_final = w2
 
     accuracy3, method_name3, w3 = execute_one_method(y, tx, ids, "3. GRADIENT DESCENT", cross_validation_flag, least_squares_GD, initial_w=args["initial_w"], max_iters=args["max_iters"], gamma=args["gamma"])
+    if(accuracy3 > max_accuracy):
+        max_accuracy = accuracy3
+        method_name_selected = method_name3
+        w_final = w3
+
+    accuracy4, method_name4, w4 = execute_one_method(y, tx, ids, "4. STOCHASTIC GRADIENT", cross_validation_flag, least_squares_SGD, initial_w=args["initial_w"], max_iters=args["max_iters"], gamma=args["gamma"])
 
     return max_accuracy, method_name_selected, w_final
     # ADD OTHER METHODS!!!!!!!!!
