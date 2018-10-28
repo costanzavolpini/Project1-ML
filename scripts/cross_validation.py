@@ -5,7 +5,14 @@ from execute_code import replace_set_normalize
 from implementations import logistic_regression, reg_logistic_regression
 
 def build_k_indices(y, k_fold, seed):
-    """build k indices for k-fold."""
+    """ Build k indices for k-fold
+        Input:
+            y: labels
+            k_fold: number of fold that we want to generate
+            seed: number to make a random seed
+        Output:
+            array: indices of the folds
+    """
     num_row = y.shape[0]
     interval = int(num_row / k_fold)
     np.random.seed(seed)
@@ -15,7 +22,21 @@ def build_k_indices(y, k_fold, seed):
 
 
 def cross_validation(y, x, k_indices, k, degree, m, **args):
-    """return the loss of ridge regression (of train and test data)."""
+    """Apply cross validation given a set and indices of the fold.
+        Input:
+            y: labels
+            x: features
+            k_indices: indices of the folds
+            k: number of fold that we want to generate
+            degree: degree for feature augmentation (build_poly method)
+            m: method that we want to run
+            args: possible parameters to pass to the method
+        Output:
+            loss: final loss
+            w: final weights
+            accuracy_train: final accuracy obtained by train set
+            accuracy_test: final accuracy obtained by test set
+    """
     # get k'th subgroup in test, others in train
     test_indice = k_indices[k]
     train_indice = k_indices[~(np.arange(k_indices.shape[0]) == k)]

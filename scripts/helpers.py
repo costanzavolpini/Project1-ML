@@ -1,6 +1,7 @@
 import numpy as np
 
 def sigmoid(x):
+    """This function returns a sigmoid function"""
     s = 1/(1+np.exp(-x))
     return s
 
@@ -9,12 +10,11 @@ def calculate_mse(e, y):
     return 1/(len(y)) * np.sum(e**2)
 
 def calculate_mae(e):
-    """Calculate the mae for vector e."""
+    """Calculate the mae for vector e"""
     return np.mean(np.abs(e))
 
 def compute_loss(y, tx, w):
-    """Calculate the loss using mse or mae.
-    """
+    """Calculate the loss using mse or mae"""
     e = y - tx.dot(w)
     return calculate_mse(e, y)
 
@@ -37,20 +37,19 @@ def initialize_weight(n):
     return np.random.random(n)*2-1
 
 def calculate_log_likelihood(y, tx, w):
-    """compute the cost by negative log likelihood."""
+    """compute the cost by negative log likelihood"""
     pred = sigmoid(tx.dot(w))
     loss = y.T.dot(np.log(pred + 1e-5)) + (1 - y).T.dot(np.log(1 - pred + 1e-5))
     return np.squeeze(- loss)
 
 def compute_gradient_log_likelihood(y, tx, w):
-    """compute the gradient of loss."""
+    """compute the gradient of loss"""
     pred = sigmoid(tx.dot(w))
     grad = tx.T.dot(pred - y)
     return grad
 
 def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
-    """
-    Generate a minibatch iterator for a dataset.
+    """ Generate a minibatch iterator for a dataset.
     Takes as input two iterables (here the output desired values 'y' and the input data 'tx')
     Outputs an iterator which gives mini-batches of `batch_size` matching elements from `y` and `tx`.
     Data can be randomly shuffled to avoid ordering in the original data messing with the randomness of the minibatches.
@@ -75,17 +74,14 @@ def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
 
 
 def compute_stoch_gradient(y, tx, w):
-    """Compute a stochastic gradient from just few examples n and their corresponding y_n labels."""
+    """Compute a stochastic gradient from just few examples n and their corresponding y_n labels"""
     err = y - tx.dot(w)
     grad = -tx.T.dot(err) / len(err)
     return grad, err
 
 
 def learning_by_gradient_descent(y, tx, w, gamma):
-    """
-    Do one step of gradient descen using logistic regression.
-    Return the loss and the updated w.
-    """
+    """ Do one step of gradient descen using logistic regression. Return the loss and the updated w"""
     loss = calculate_log_likelihood(y, tx, w)
     grad = compute_gradient_log_likelihood(y, tx, w)
     w -= gamma * grad
@@ -99,8 +95,7 @@ def penalized_logistic_regression(y, tx, w, lambda_):
     return loss, gradient
 
 def build_poly(x, degree):
-    # FEATURE AUGMENTATION
-    """polynomial basis functions for input data x, for j=0 up to j=degree."""
+    """Feature augmentation. Polynomial basis functions for input data x, for j=0 up to j=degree."""
     poly = np.ones((len(x), 1))
     for deg in range(1, degree+1):
         poly = np.c_[poly, np.power(x, deg)]

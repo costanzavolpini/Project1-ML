@@ -2,9 +2,19 @@
 import numpy as np
 from helpers import *
 
-# Linear regression using gradient descent
+
 def least_squares_GD(y, tx, initial_w, max_iters, gamma):
-    """Gradient descent algorithm."""
+    """Linear regression using gradient descent
+    Input:
+        y: labels
+        tx: features
+        initial_w: initial weight vector
+        max_iters: number of steps to run
+        gamma: step-size
+    Output:
+        loss: final loss
+        weight: final weight
+    """
     # Define parameters to store w and loss
     if(initial_w == None):
           initial_w = initialize_weight(tx.shape[1])
@@ -25,9 +35,20 @@ def least_squares_GD(y, tx, initial_w, max_iters, gamma):
                 break
     return loss, w
 
-# Linear regression using stochastic gradient descent
+
+
 def least_squares_SGD(y, tx, initial_w, max_iters, gamma):
-    """Stochastic gradient descent."""
+    """Linear regression using stochastic gradient descent
+    Input:
+        y: labels
+        tx: features
+        initial_w: initial weight vector
+        max_iters: number of steps to run
+        gamma: step-size
+    Output:
+        loss: final loss
+        weight: final weight
+    """
     # Define parameters to store w and loss
     if(initial_w == None):
         initial_w = initialize_weight(tx.shape[1])
@@ -50,9 +71,17 @@ def least_squares_SGD(y, tx, initial_w, max_iters, gamma):
                     break
     return loss, w
 
-# Least squares regression using normal equations
+
+
 def least_squares(y, tx):
-    """This function return the optimal weights (using QR), and the mean-squared error"""
+    """Least squares regression using normal equations (QR)
+    Input:
+        y: labels
+        tx: features
+    Output:
+        loss: final loss
+        weight: final weight
+    """
     a = tx.T.dot(tx)
     b = tx.T.dot(y)
     try:
@@ -62,9 +91,18 @@ def least_squares(y, tx):
     loss = compute_loss(y, tx, w)
     return loss, w
 
-# Ridge regression using normal equations
+
+
 def ridge_regression(y, tx, lambda_):
-    """ridge regression."""
+    """Ridge regression using normal equations
+    Input:
+        y: labels
+        tx: features
+        lambda: the regularization parameter
+    Output:
+        loss: final loss
+        weight: final weight
+    """
     aI = 2 * tx.shape[0] * lambda_ * np.identity(tx.shape[1])
     a = tx.T.dot(tx) + aI
     b = tx.T.dot(y)
@@ -72,8 +110,20 @@ def ridge_regression(y, tx, lambda_):
     loss = compute_loss(y, tx, w)
     return loss, w
 
-# Logistic regression using gradient descent or SGD
+
+
 def logistic_regression(y, tx, initial_w, max_iters, gamma):
+    """Logistic regression using gradient descent or SGD
+    Input:
+        y: labels
+        tx: features
+        initial_w: initial weight vector
+        max_iters: number of steps to run
+        gamma: step-size
+    Output:
+        loss: final loss
+        weight: final weight
+    """
     if(initial_w == None):
         initial_w = initialize_weight(tx.shape[1])
     losses = []
@@ -97,11 +147,19 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
 
     return loss, w
 
-# Regularized logistic regression using gradient descent or SGD
+
+
 def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
-    """
-    Do one step of gradient descent, using the penalized logistic regression.
-    Return the loss and updated w.
+    """Regularized logistic regression using gradient descent or SGD.
+    Input:
+        y: labels
+        tx: features
+        initial_w: initial weight vector
+        max_iters: number of steps to run
+        gamma: step-size
+    Output:
+        loss: final loss
+        weight: final weight
     """
     y = y.copy()
     y[y == -1] = 0
