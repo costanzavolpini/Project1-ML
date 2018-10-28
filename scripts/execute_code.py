@@ -80,10 +80,18 @@ def execute_one_method(y, tx, ids, method_name, cross_validation_flag, m, **args
         print("Accuracy train, mean: %f, min value: %f, max value: %f \n" %(mean_accuracy_train, min_accuracy_train, max_accuracy_train))
         return mean_accuracy_train, method_name, w
     else:
+
+        y = y.copy()
+
+        if(m is logistic_regression or m is reg_logistic_regression):
+            y[y == -1] = 0
         loss, w = m(y, tx, **args)
 
         # predict the y given weight and data
-        y_predicted = predict_labels(w, tx)
+        if(m is logistic_regression or m is reg_logistic_regression):
+            y_predicted = predict_labels_logistic(w, tx)
+        else:
+            y_predicted = predict_labels(w, tx)
 
         # calculate the accuracy for train and test data
         accuracy_train = calculate_accuracy(y_predicted, y)
@@ -153,6 +161,12 @@ def execute_all_methods(y, tx, ids, cross_validation_flag, **args):
         max_accuracy = accuracy5
         method_name_selected = method_name5
         w_final = w5
+
+    accuracy6, method_name6, w6 = execute_one_method(y, tx, ids, "6. REGULARIZED LOGISTIC REGRESSION", cross_validation_flag, reg_logistic_regression, initial_w=args["initial_w"], lambda_=args["lambda_"], max_iters=args["max_iters"], gamma=args["gamma"])
+    if(accuracy6 > max_accuracy):
+        max_accuracy = accuracy6
+        method_name_selected = method_name6
+        w_final = w6
 
     return max_accuracy, method_name_selected, w_final
     # ADD OTHER METHODS!!!!!!!!!

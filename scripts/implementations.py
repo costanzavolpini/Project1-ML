@@ -85,4 +85,17 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
     return loss, w
 
 # Regularized logistic regression using gradient descent or SGD
-#TODO
+def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
+    """
+    Do one step of gradient descent, using the penalized logistic regression.
+    Return the loss and updated w.
+    """
+    if(initial_w == None):
+        initial_w = initialize_weight(tx.shape[1])
+    w = initial_w
+    loss, gradient = penalized_logistic_regression(y, tx, w, lambda_)
+    # norm_gradient = np.linalg.norm(gradient)
+    # gamma = gamma / (norm_gradient)
+
+    w = w - gamma * gradient
+    return loss, w
