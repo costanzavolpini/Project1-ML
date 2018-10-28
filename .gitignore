@@ -14,3 +14,11 @@ scripts/datas/test\.csv
 scripts/datas/train\.csv
 
 scripts/__pycache__/
+
+scripts/submission-27-10
+
+all_data/test\.csv
+
+report/Archive\.zip
+
+scripts/\.ipynb_checkpoints/
