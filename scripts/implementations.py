@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-from helpers import *
+from helpers_functions import initialize_weight, compute_gradient, calculate_mse, batch_iter, compute_loss, compute_stoch_gradient, learning_by_gradient_descent, penalized_logistic_regression
 
 
 def least_squares_GD(y, tx, initial_w, max_iters, gamma):

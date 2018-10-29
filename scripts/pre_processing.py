@@ -1,20 +1,8 @@
+# -*- coding: utf-8 -*-
 import numpy as np
-from numpy.linalg import eig
+from helpers_functions import find_median, find_mean, clean_array
 
-def clean_array(tx):
-    """Given a dataset tx (array of array) returns an array where all the missing values are masked"""
-    return np.ma.masked_values(tx, -999.) # Mask the array in order to not have -999.
-
-
-def find_mean(tx):
-    """Given a dataset tx (array of array) returns an array containing the mean for each array"""
-    return (clean_array(tx)).mean(axis=0)
-
-
-def find_median(tx):
-    """Given a dataset tx (array of array) returns an array containing the median for each array"""
-    return np.ma.median(clean_array(tx), axis=0)
-
+################ CLEAN DATA ################
 
 def replace_missing_values(tx, new_values):
     """Given a dataset tx (array of array) returns a new dataset tx that instead of missing values contains new values"""
@@ -30,12 +18,88 @@ def replace_missing_values(tx, new_values):
     return x
 
 
+
 def standardize(x):
     """Given a dataset x, subtract the mean and divide by the standard deviation for each dimension. After this processing, each dimension has zero mean and unit variance."""
     """Standardize the original data set."""
     centered_data = x - np.mean(x, axis=0)
     std_data = centered_data / np.nanstd(centered_data, axis=0)
     return std_data
+
+
+
+def replace_set_mean(tx):
+    """ Return a new dataset where missing values are replaced by mean
+        Input:
+            tx: features
+        Output:
+            tx: features where missing values are replaced by mean
+    """
+    means = find_mean(tx)
+    tx_replaced_by_mean = replace_missing_values(tx, means)
+    return tx_replaced_by_mean
+
+
+
+def replace_set_median(tx):
+    """ Return a new dataset where missing values are replaced by median
+        Input:
+            tx: features
+        Output:
+            tx: features where missing values are replaced by median
+    """
+    means = find_mean(tx)
+    tx_replaced_by_mean = replace_missing_values(tx, means)
+    return tx_replaced_by_mean
+
+
+
+def replace_set_normalize(tx):
+    """ Return a new dataset where missing values are replaced by missing values with 0 and before that normalize all values without considering missing values
+        Input:
+            tx: features
+        Output:
+            tx: features where missing values are replaced by 0 and normalized
+    """
+    std_data_tx_with_mask = standardize(clean_array(tx))
+    tx_std_data_replaced_by_0 = replace_missing_values(std_data_tx_with_mask, np.full((30, 1), 0))
+    return tx_std_data_replaced_by_0
+
+
+def outlier_removal(array_jet, top_value, bot_value, per_top = False, per_bot = False):
+    """ Remove outliers
+        Input:
+            array_jet: features
+            top_value: top percentile
+            bot_value: bottom percentile
+            per_top = boolean to check if we want to apply top percentile
+            per_bot = boolean to check if we want to apply bottom percentile
+        Output:
+            array_jet: features without outliers
+    """
+    percentiles_top = np.percentile(array_jet, top_value, axis=1)
+    percentiles_bot = np.percentile(array_jet, bot_value, axis=1)
+
+    for col in range(len(array_jet[0])):
+        if per_top == True:
+            array_jet[:, col][array_jet[:, col] > percentiles_top[col]] = np.ma.median(array_jet[:, col])
+
+        elif per_bot == True:
+            array_jet[:, col][array_jet[:, col] < percentiles_bot[col]] = np.ma.median(array_jet[:, col])
+
+    return array_jet
+
+################ END CLEAN DATA ################
+
+
+################ FEATURE AUGMENTATION ################
+
+def build_poly(x, degree):
+    """Feature augmentation. Polynomial basis functions for input data x, for j=0 up to j=degree."""
+    poly = np.ones((len(x), 1))
+    for deg in range(1, degree+1):
+        poly = np.c_[poly, np.power(x, deg)]
+    return poly
 
 
 
@@ -68,7 +132,6 @@ def physics_features(input_data):
     new_data = np.c_[input_data, new_feat]
 
     return new_data
-
 
 
 def new_features(input_data, polynomial):
@@ -104,7 +167,6 @@ def new_features(input_data, polynomial):
 
 
 
-
 def new_feat_test(input_data, corr_columns, polynomial):
     """ Engineered feature augmentation: add new features to the dataset with physical meaning looking on the correlation between features
         NB. Since for test set we have more data we do not know if it would affect the correlation, creating untested features
@@ -129,48 +191,5 @@ def new_feat_test(input_data, corr_columns, polynomial):
 
     return new_data
 
+################ END FEATURE AUGMENTATION ################
 
-
-def outlier_removal(array_jet, top_value, bot_value, per_top = False, per_bot = False):
-    """ Remove outliers
-        Input:
-            array_jet: features
-            top_value: top percentile
-            bot_value: bottom percentile
-            per_top = boolean to check if we want to apply top percentile
-            per_bot = boolean to check if we want to apply bottom percentile
-        Output:
-            array_jet: features without outliers
-    """
-    percentiles_top = np.percentile(array_jet, top_value, axis=1)
-    percentiles_bot = np.percentile(array_jet, bot_value, axis=1)
-
-    for col in range(len(array_jet[0])):
-        if per_top == True:
-            array_jet[:, col][array_jet[:, col] > percentiles_top[col]] = np.ma.median(array_jet[:, col])
-
-        elif per_bot == True:
-            array_jet[:, col][array_jet[:, col] < percentiles_bot[col]] = np.ma.median(array_jet[:, col])
-
-    return array_jet
-
-
-def input_data_PCA(input_data):
-	# from numpy.linalg import eig
-    #Calculate the mean of each column
-    # M = np.mean(input_data.T, axis=1)
-    M = find_mean(input_data)
-
-    # center columns by substracting column means
-    C = input_data - M
-
-    # calculate covariance matrix of centered matrix
-    V = np.cov(C.T)
-
-    # eigendecomposition of covariance matrix
-    values, vectors = eig(V)
-
-    # project data
-    P = vectors.T.dot(C.T)
-
-    return P.T

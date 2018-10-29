@@ -1,4 +1,7 @@
+# -*- coding: utf-8 -*-
 import numpy as np
+
+################ HELPER FUNCTION ################
 
 def get_rows_indexes(tx):
 	"""Given a dataset return 4 subset looking on jet_num
@@ -16,6 +19,38 @@ def get_rows_indexes(tx):
 	# just for check
 	assert len(column_jet_num) == (len(rows_0_indexes[0]) + len(rows_1_indexes[0]) + len(rows_2_indexes[0]))
 	return rows_0_indexes, rows_1_indexes, rows_2_indexes
+
+
+
+def columns_contains_just_missing_values(s):
+	"""Function that returns features containing just missing values
+	Input:
+		s: feature set
+	Output:
+		columns_to_remove: array of features "ids" containing just missing values
+	"""
+	columns_to_remove = []
+	for i in range(len(s[0])):
+		if(np.all(s[:, i] == -999.)):
+			columns_to_remove.append(i)
+	return columns_to_remove
+
+
+
+def columns_contains_same_value(s):
+	"""Function that returns features containing constant value
+	Input:
+		s: feature set
+	Output:
+		columns_to_remove: array of features "ids" containing constant value
+	"""
+	columns_to_remove = []
+	for col in range(len(s[0])):
+		if len(np.unique(s[:, col])) == 1:
+			columns_to_remove.append(col)
+	return columns_to_remove
+
+################ END HELPER FUNCTION ################
 
 
 
@@ -52,30 +87,3 @@ def generate_3_sets_looking_on_jetnum(tx, y, ids):
 
 
 
-def columns_contains_just_missing_values(s):
-	"""Function that returns features containing just missing values
-	Input:
-		s: feature set
-	Output:
-		columns_to_remove: array of features "ids" containing just missing values
-	"""
-	columns_to_remove = []
-	for i in range(len(s[0])):
-		if(np.all(s[:, i] == -999.)):
-			columns_to_remove.append(i)
-	return columns_to_remove
-
-
-
-def columns_contains_same_value(s):
-	"""Function that returns features containing constant value
-	Input:
-		s: feature set
-	Output:
-		columns_to_remove: array of features "ids" containing constant value
-	"""
-	columns_to_remove = []
-	for col in range(len(s[0])):
-		if len(np.unique(s[:, col])) == 1:
-			columns_to_remove.append(col)
-	return columns_to_remove

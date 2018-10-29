@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import numpy as np
 
 def sigmoid(x):
@@ -5,18 +6,46 @@ def sigmoid(x):
     s = 1/(1+np.exp(-x))
     return s
 
+
+
+def clean_array(tx):
+    """Given a dataset tx (array of array) returns an array where all the missing values are masked"""
+    return np.ma.masked_values(tx, -999.) # Mask the array in order to not have -999.
+
+
+
+################ CALCULATE ERROR, LOSS ################
+
 def calculate_mse(e, y):
     """This function returns the mean-squared error given the error"""
     return 1/(len(y)) * np.sum(e**2)
+
+
 
 def calculate_mae(e):
     """Calculate the mae for vector e"""
     return np.mean(np.abs(e))
 
+
+
 def compute_loss(y, tx, w):
     """Calculate the loss using mse or mae"""
     e = y - tx.dot(w)
     return calculate_mse(e, y)
+
+
+
+def calculate_log_likelihood(y, tx, w):
+    """compute the cost by negative log likelihood"""
+    pred = sigmoid(tx.dot(w))
+    loss = y.T.dot(np.log(pred + 1e-5)) + (1 - y).T.dot(np.log(1 - pred + 1e-5))
+    return np.squeeze(- loss)
+
+################ END CALCULATE LOSS ################
+
+
+
+################ CALCULATE ACCURACY / INITIALIZE WEIGHT ################
 
 def calculate_accuracy(preds, vals):
     """Calculate the accuracy"""
@@ -27,26 +56,32 @@ def calculate_accuracy(preds, vals):
     accuracy = acc / len(vals)
     return accuracy
 
-def compute_gradient(y, tx, w):
-    """Compute the gradient."""
-    err = y - tx.dot(w)
-    grad = -tx.T.dot(err) / len(err)
-    return grad, err
+
 
 def initialize_weight(n):
     return np.random.random(n)*2-1
 
-def calculate_log_likelihood(y, tx, w):
-    """compute the cost by negative log likelihood"""
-    pred = sigmoid(tx.dot(w))
-    loss = y.T.dot(np.log(pred + 1e-5)) + (1 - y).T.dot(np.log(1 - pred + 1e-5))
-    return np.squeeze(- loss)
+################ END CALCULATE ACCURACY / INITIALIZE WEIGHT ################
 
-def compute_gradient_log_likelihood(y, tx, w):
-    """compute the gradient of loss"""
-    pred = sigmoid(tx.dot(w))
-    grad = tx.T.dot(pred - y)
-    return grad
+
+
+################ MEAN / MEDIAN / NORMALIZATION ################
+
+def find_mean(tx):
+    """Given a dataset tx (array of array) returns an array containing the mean for each array"""
+    return (clean_array(tx)).mean(axis=0)
+
+
+
+def find_median(tx):
+    """Given a dataset tx (array of array) returns an array containing the median for each array"""
+    return np.ma.median(clean_array(tx), axis=0)
+
+################ END MEAN / MEDIAN / NORMALIZATION ################
+
+
+
+################ BATCH ################
 
 def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
     """ Generate a minibatch iterator for a dataset.
@@ -73,12 +108,37 @@ def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
             yield shuffled_y[start_index:end_index], shuffled_tx[start_index:end_index]
 
 
+################ END BATCH ################
+
+
+################ GRADIENT ################
+
+def compute_gradient(y, tx, w):
+    """Compute the gradient."""
+    err = y - tx.dot(w)
+    grad = -tx.T.dot(err) / len(err)
+    return grad, err
+
+
+
+def compute_gradient_log_likelihood(y, tx, w):
+    """compute the gradient of loss"""
+    pred = sigmoid(tx.dot(w))
+    grad = tx.T.dot(pred - y)
+    return grad
+
+
+
 def compute_stoch_gradient(y, tx, w):
     """Compute a stochastic gradient from just few examples n and their corresponding y_n labels"""
     err = y - tx.dot(w)
     grad = -tx.T.dot(err) / len(err)
     return grad, err
+################ END GRADIENT ################
 
+
+
+################ LOGISTIC ################
 
 def learning_by_gradient_descent(y, tx, w, gamma):
     """ Do one step of gradient descen using logistic regression. Return the loss and the updated w"""
@@ -87,32 +147,16 @@ def learning_by_gradient_descent(y, tx, w, gamma):
     w -= gamma * grad
     return loss, w
 
+
+
 def penalized_logistic_regression(y, tx, w, lambda_):
     """return the loss and gradient."""
-    num_samples = y.shape[0]
     loss = calculate_log_likelihood(y,tx,w) + lambda_ * np.squeeze(w.T.dot(w))
     gradient = compute_gradient_log_likelihood(y, tx, w) + 2 * lambda_ * w
     return loss, gradient
 
-def build_poly(x, degree):
-    """Feature augmentation. Polynomial basis functions for input data x, for j=0 up to j=degree."""
-    poly = np.ones((len(x), 1))
-    for deg in range(1, degree+1):
-        poly = np.c_[poly, np.power(x, deg)]
-    return poly
+################ END LOGISTIC ################
 
-def build_k_indices(y, k_fold, seed):
-    """ Build k indices for k-fold
-        Input:
-            y: labels
-            k_fold: number of fold that we want to generate
-            seed: number to make a random seed
-        Output:
-            array: indices of the folds
-    """
-    num_row = y.shape[0]
-    interval = int(num_row / k_fold)
-    np.random.seed(seed)
-    indices = np.random.permutation(num_row)
-    k_indices = [indices[k * interval: (k + 1) * interval] for k in range(k_fold)]
-    return np.array(k_indices)
+
+
+

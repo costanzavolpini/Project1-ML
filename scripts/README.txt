@@ -14,11 +14,16 @@ STRUCTURE:
 - scripts/ : folder containing all the python scripts used in the project
 
 PYTHON SCRIPTS:
-- cross_validation.py :
-- execute_code.py
-- helpers.py
-- implementations.py
-- spli_jet_num.py
-- pre_processing.py
-- proj1_helpers.py
-- run.py
+- cross_validation.py : functions to apply cross validation technique given a method and a dataset
+- execute_code.py : functions to execute one method or more with/without cross validation and to generate a submission
+- helpers_functions.py : contains helper functions to calculate loss, mean, median, accuracy, gradient and generate minibatch iterator.
+- implementations.py : machine learning baseline functions
+- spli_jet_num.py : functions to split the dataset in 3 parts by jet_num feature and to drop columns containing constant values
+- pre_processing.py : functions to clean dataset and make feature augmentation.
+- proj1_helpers.py : helper functions specifically for this project
+- run.py : simulate the code to get our best result
+
+TO RUN THE CODE:
+1. Install numpy (pip3 install numpy for OSX)
+2. go into folder scripts
+3. python3 run.py
