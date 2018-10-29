@@ -151,36 +151,36 @@ def execute_all_methods(y, tx, ids, cross_validation_flag, **args):
             method_name: name of the method with the higher accuracy
             w: weights
     """
-    accuracy1, method_name1, w1 = execute_one_method(y, tx, ids, "1. LEAST SQUARE", cross_validation_flag, least_squares)
+    accuracy1, w1 = execute_one_method(y, tx, ids, "1. LEAST SQUARE", cross_validation_flag, least_squares)
     max_accuracy = accuracy1
     method_name_selected = "LEAST SQUARE"
     w_final = w1
 
-    accuracy2, method_name2, w2 = execute_one_method(y, tx, ids, "2. RIDGE REGRESSION", cross_validation_flag, ridge_regression, lambda_=args["lambda_"])
+    accuracy2, w2 = execute_one_method(y, tx, ids, "2. RIDGE REGRESSION", cross_validation_flag, ridge_regression, lambda_=args["lambda_"])
     if(accuracy2 > max_accuracy):
         max_accuracy = accuracy2
         method_name_selected = "RIDGE REGRESSION"
         w_final = w2
 
-    accuracy3, method_name3, w3 = execute_one_method(y, tx, ids, "3. GRADIENT DESCENT", cross_validation_flag, least_squares_GD, initial_w=args["initial_w"], max_iters=args["max_iters"], gamma=args["gamma"])
+    accuracy3, w3 = execute_one_method(y, tx, ids, "3. GRADIENT DESCENT", cross_validation_flag, least_squares_GD, initial_w=args["initial_w"], max_iters=args["max_iters"], gamma=args["gamma"])
     if(accuracy3 > max_accuracy):
         max_accuracy = accuracy3
         method_name_selected = "GRADIENT DESCENT"
         w_final = w3
 
-    accuracy4, method_name4, w4 = execute_one_method(y, tx, ids, "4. STOCHASTIC GRADIENT", cross_validation_flag, least_squares_SGD, initial_w=args["initial_w"], max_iters=args["max_iters"], gamma=args["gamma"])
+    accuracy4, w4 = execute_one_method(y, tx, ids, "4. STOCHASTIC GRADIENT", cross_validation_flag, least_squares_SGD, initial_w=args["initial_w"], max_iters=args["max_iters"], gamma=args["gamma"])
     if(accuracy4 > max_accuracy):
         max_accuracy = accuracy4
         method_name_selected = "STOCHASTIC GRADIENT"
         w_final = w4
 
-    accuracy5, method_name5, w5 = execute_one_method(y, tx, ids, "5. LOGISTIC REGRESSION", cross_validation_flag, logistic_regression, initial_w=args["initial_w"], max_iters=args["max_iters"], gamma=args["gamma"])
+    accuracy5, w5 = execute_one_method(y, tx, ids, "5. LOGISTIC REGRESSION", cross_validation_flag, logistic_regression, initial_w=args["initial_w"], max_iters=args["max_iters"], gamma=args["gamma"])
     if(accuracy5 > max_accuracy):
         max_accuracy = accuracy5
         method_name_selected = "LOGISTIC REGRESSION"
         w_final = w5
 
-    accuracy6, method_name6, w6 = execute_one_method(y, tx, ids, "6. REGULARIZED LOGISTIC REGRESSION", cross_validation_flag, reg_logistic_regression, initial_w=args["initial_w"], lambda_=args["lambda_"], max_iters=args["max_iters"], gamma=args["gamma"])
+    accuracy6, w6 = execute_one_method(y, tx, ids, "6. REGULARIZED LOGISTIC REGRESSION", cross_validation_flag, reg_logistic_regression, initial_w=args["initial_w"], lambda_=args["lambda_"], max_iters=args["max_iters"], gamma=args["gamma"])
     if(accuracy6 > max_accuracy):
         max_accuracy = accuracy6
         method_name_selected = "REGULARIZED LOGISTIC REGRESSION"
