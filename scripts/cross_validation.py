@@ -4,22 +4,6 @@ from helpers import *
 from execute_code import replace_set_normalize
 from implementations import logistic_regression, reg_logistic_regression
 
-def build_k_indices(y, k_fold, seed):
-    """ Build k indices for k-fold
-        Input:
-            y: labels
-            k_fold: number of fold that we want to generate
-            seed: number to make a random seed
-        Output:
-            array: indices of the folds
-    """
-    num_row = y.shape[0]
-    interval = int(num_row / k_fold)
-    np.random.seed(seed)
-    indices = np.random.permutation(num_row)
-    k_indices = [indices[k * interval: (k + 1) * interval] for k in range(k_fold)]
-    return np.array(k_indices)
-
 
 def cross_validation(y, x, k_indices, k, degree, m, **args):
     """Apply cross validation given a set and indices of the fold.

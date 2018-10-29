@@ -100,3 +100,19 @@ def build_poly(x, degree):
     for deg in range(1, degree+1):
         poly = np.c_[poly, np.power(x, deg)]
     return poly
+
+def build_k_indices(y, k_fold, seed):
+    """ Build k indices for k-fold
+        Input:
+            y: labels
+            k_fold: number of fold that we want to generate
+            seed: number to make a random seed
+        Output:
+            array: indices of the folds
+    """
+    num_row = y.shape[0]
+    interval = int(num_row / k_fold)
+    np.random.seed(seed)
+    indices = np.random.permutation(num_row)
+    k_indices = [indices[k * interval: (k + 1) * interval] for k in range(k_fold)]
+    return np.array(k_indices)

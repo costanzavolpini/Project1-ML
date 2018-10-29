@@ -68,8 +68,7 @@ def least_squares_SGD(y, tx, initial_w, max_iters, gamma):
             if len(losses) > 1 and np.abs(losses[-1] - losses[-2]) < 1e-8:
                 count += 1
                 if count == 10:
-                    break
-    return loss, w
+                    break    return loss, w
 
 
 
@@ -169,4 +168,5 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
     loss, gradient = penalized_logistic_regression(y, tx, w, lambda_)
 
     w = w - gamma * gradient
+
     return loss, w
