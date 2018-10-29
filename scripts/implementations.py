@@ -68,7 +68,8 @@ def least_squares_SGD(y, tx, initial_w, max_iters, gamma):
             if len(losses) > 1 and np.abs(losses[-1] - losses[-2]) < 1e-8:
                 count += 1
                 if count == 10:
-                    break    return loss, w
+                    break
+            return loss, w
 
 
 

@@ -210,18 +210,13 @@ def generate_submission(tx0, tx1, tx2, ids0, ids1, ids2, w0, w1, w2, name, degre
     test_poly2 = replace_set_normalize(test_poly2)
     y_test_predicted2 = predict_labels(w2, test_poly2)
 
-    # id_final = np.concatenate((ids0, ids1, ids2, ids3), axis=0)
-    # y_pred_final = np.concatenate((y_test_predicted0, y_test_predicted1, y_test_predicted2, y_test_predicted3), axis=0)
-
-
     jet_num_0 = np.c_[ids0, y_test_predicted0]
     jet_num_1 = np.c_[ids1, y_test_predicted1]
     jet_num_2 = np.c_[ids2, y_test_predicted2]
 
-    final = np.concatenate((jet_num_0, jet_num_1, jet_num_2), axis=0)
-    finallll = list(final)
-    finallll.sort(key=lambda x:x[0])
-    g = np.array(finallll)
-    return g[:, -1]
-    # return y_pred_final
-    # create_csv_submission(id_final, y_pred_final, name)
+    final_pred = np.concatenate((jet_num_0, jet_num_1, jet_num_2), axis=0)
+    final_pred_list = list(final_pred)
+    final_pred_list.sort(key=lambda x:x[0])
+    result = np.array(final_pred_list)
+    # create_csv_submission(id_final, result[:, -1], name)
+    return result[:, -1]
