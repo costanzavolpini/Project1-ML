@@ -84,7 +84,7 @@ def execute_one_method(y, tx, ids, method_name, cross_validation_flag, m, **args
         print(method_name)
         print("\nAccuracy test, mean: %f, min value: %f, max value: %f \n" %(mean_accuracy_test, min_accuracy_test, max_accuracy_test))
         print("Accuracy train, mean: %f, min value: %f, max value: %f \n" %(mean_accuracy_train, min_accuracy_train, max_accuracy_train))
-        return mean_accuracy_train, w
+        return mean_accuracy_test, w
     else:
         loss, w = m(y, tx, **args)
 
@@ -219,6 +219,21 @@ def generate_submission(tx0, tx1, tx2, tx3, ids0, ids1, ids2, ids3, w0, w1, w2, 
     test_poly3 = replace_set_normalize(test_poly3)
     y_test_predicted3 = predict_labels(w3, test_poly3)
 
-    id_final = np.concatenate((ids0, ids1, ids2, ids3), axis=0)
-    y_pred_final = np.concatenate((y_test_predicted0, y_test_predicted1, y_test_predicted2, y_test_predicted3), axis=0)
-    create_csv_submission(id_final, y_pred_final, name)
+    # id_final = np.concatenate((ids0, ids1, ids2, ids3), axis=0)
+    # y_pred_final = np.concatenate((y_test_predicted0, y_test_predicted1, y_test_predicted2, y_test_predicted3), axis=0)
+
+
+    jet_num_0 = np.c_[ids0, y_test_predicted0]
+    jet_num_1 = np.c_[ids1, y_test_predicted1]
+    jet_num_2 = np.c_[ids2, y_test_predicted2]
+    jet_num_3 = np.c_[ids3, y_test_predicted3]
+
+    print(jet_num_0)
+
+    final = np.concatenate((jet_num_0, jet_num_1, jet_num_2, jet_num_3), axis=0)
+    finallll = list(final)
+    finallll.sort(key=lambda x:x[0])
+    g = np.array(finallll)
+    return g[:, -1]
+    # return y_pred_final
+    # create_csv_submission(id_final, y_pred_final, name)

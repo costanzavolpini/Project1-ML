@@ -1,4 +1,5 @@
 import numpy as np
+from numpy.linalg import eig
 
 def clean_array(tx):
     """Given a dataset tx (array of array) returns an array where all the missing values are masked"""
@@ -152,3 +153,24 @@ def outlier_removal(array_jet, top_value, bot_value, per_top = False, per_bot = 
             array_jet[:, col][array_jet[:, col] < percentiles_bot[col]] = np.ma.median(array_jet[:, col])
 
     return array_jet
+
+
+def input_data_PCA(input_data):
+	# from numpy.linalg import eig
+    #Calculate the mean of each column
+    # M = np.mean(input_data.T, axis=1)
+    M = find_mean(input_data)
+
+    # center columns by substracting column means
+    C = input_data - M
+
+    # calculate covariance matrix of centered matrix
+    V = np.cov(C.T)
+
+    # eigendecomposition of covariance matrix
+    values, vectors = eig(V)
+
+    # project data
+    P = vectors.T.dot(C.T)
+
+    return P.T

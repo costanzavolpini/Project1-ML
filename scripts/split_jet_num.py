@@ -15,7 +15,6 @@ def get_rows_indexes(tx):
 	rows_3_indexes = np.where(column_jet_num == 3)
 
 	# just for check
-	print(len(column_jet_num), (len(rows_0_indexes[0]) + len(rows_1_indexes[0]) + len(rows_2_indexes[0]) + len(rows_3_indexes[0])))
 	assert len(column_jet_num) == (len(rows_0_indexes[0]) + len(rows_1_indexes[0]) + len(rows_2_indexes[0]) + len(rows_3_indexes[0]))
 	return rows_0_indexes, rows_1_indexes, rows_2_indexes, rows_3_indexes
 
