@@ -65,7 +65,7 @@ def columns_contains_just_missing_values(s):
 		columns_to_remove: array of features "ids" containing just missing values
 	"""
 	columns_to_remove = []
-	for i in range (0, 30):
+	for i in range(len(s[0])):
 		if(np.all(s[:, i] == -999.)):
 			columns_to_remove.append(i)
 	return columns_to_remove
@@ -81,6 +81,6 @@ def columns_contains_same_value(s):
 	"""
 	columns_to_remove = []
 	for col in range(len(s[0])):
-		if len(np.unique(s[:,col])) == 1:
+		if len(np.unique(s[:, col])) == 1:
 			columns_to_remove.append(col)
 	return columns_to_remove

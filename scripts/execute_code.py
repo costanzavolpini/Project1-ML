@@ -41,7 +41,6 @@ def divide_dataset_looking_jetnum_and_remove_features(y, tx, ids):
     return features_dropped_0, features_dropped_1, features_dropped_2, features_dropped_3, y_jet_0, y_jet_1, y_jet_2, y_jet_3, ids_jet_0, ids_jet_1, ids_jet_2, ids_jet_3
 
 
-# Execute a method with or without cross_validation
 def execute_one_method(y, tx, ids, method_name, cross_validation_flag, m, **args):
     """ Execute one method and return the accuracy and weight.
         Input:
