@@ -2,14 +2,14 @@
 import numpy as np
 from implementations import *
 from split_jet_num import columns_contains_same_value, generate_3_sets_looking_on_jetnum
-from pre_processing import replace_set_normalize, build_poly
-from proj1_helpers import predict_labels
+from pre_processing import replace_set_normalize, build_poly, feature_augmented
+from proj1_helpers import predict_labels, create_csv_submission
 from cross_validation import build_k_indices, cross_validation
 from helpers_functions import calculate_accuracy
 
 ################ SPLIT DATASET ON JET_NUM ################
 
-def divide_dataset_looking_jetnum_and_remove_features(y, tx, ids):
+def divide_dataset_looking_jetnum_and_remove_features(y, tx, ids, degree=7):
     """ Divide the dataset looking on jet_num feature (column 22 of tx).
         Input:
             y: labels
@@ -34,9 +34,16 @@ def divide_dataset_looking_jetnum_and_remove_features(y, tx, ids):
     features_dropped_1 = np.delete(features_jet_1[0], columns_to_remove_1, axis=1)
     features_dropped_2 = np.delete(features_jet_2[0], columns_to_remove_2, axis=1)
 
+    features_dropped_0, features_dropped_1, features_dropped_2 = feature_augmented(features_dropped_0, features_dropped_1, features_dropped_2)
+
+    features_dropped_0 = build_poly(features_dropped_0, degree)
+    features_dropped_1 = build_poly(features_dropped_1, degree)
+    features_dropped_2 = build_poly(features_dropped_2, degree)
+
     features_dropped_0 = replace_set_normalize(features_dropped_0)
     features_dropped_1 = replace_set_normalize(features_dropped_1)
     features_dropped_2 = replace_set_normalize(features_dropped_2)
+
     return features_dropped_0, features_dropped_1, features_dropped_2, y_jet_0, y_jet_1, y_jet_2, ids_jet_0, ids_jet_1, ids_jet_2
 
 ################ END SPLIT DATASET ON JET_NUM ################
@@ -45,7 +52,7 @@ def divide_dataset_looking_jetnum_and_remove_features(y, tx, ids):
 
 ################ EXECUTE METHOD(S) ################
 
-def execute_one_method(y, tx, ids, method_name, cross_validation_flag, degree, m, **args):
+def execute_one_method(y, tx, ids, method_name, cross_validation_flag, m, **args):
     """ Execute one method and return the accuracy and weight.
         Input:
             y: labels
@@ -99,7 +106,7 @@ def execute_one_method(y, tx, ids, method_name, cross_validation_flag, degree, m
 
 
 
-def execute_all_methods(y, tx, ids, cross_validation_flag, degree, **args):
+def execute_all_methods(y, tx, ids, cross_validation_flag, **args):
     """ Execute all machine learning baseline and return the accuracy and weight of the best method with the higher accuracy.
         Input:
             y: labels
@@ -112,36 +119,36 @@ def execute_all_methods(y, tx, ids, cross_validation_flag, degree, **args):
             method_name: name of the method with the higher accuracy
             w: weights
     """
-    accuracy1, w1 = execute_one_method(y, tx, ids, "1. LEAST SQUARE", cross_validation_flag, degree, least_squares)
+    accuracy1, w1 = execute_one_method(y, tx, ids, "1. LEAST SQUARE", cross_validation_flag, least_squares)
     max_accuracy = accuracy1
     method_name_selected = "LEAST SQUARE"
     w_final = w1
 
-    accuracy2, w2 = execute_one_method(y, tx, ids, "2. RIDGE REGRESSION", cross_validation_flag, degree, ridge_regression, lambda_=args["lambda_"])
+    accuracy2, w2 = execute_one_method(y, tx, ids, "2. RIDGE REGRESSION", cross_validation_flag, ridge_regression, lambda_=args["lambda_"])
     if(accuracy2 > max_accuracy):
         max_accuracy = accuracy2
         method_name_selected = "RIDGE REGRESSION"
         w_final = w2
 
-    accuracy3, w3 = execute_one_method(y, tx, ids, "3. GRADIENT DESCENT", cross_validation_flag, degree, least_squares_GD, initial_w=args["initial_w"], max_iters=args["max_iters"], gamma=args["gamma"])
+    accuracy3, w3 = execute_one_method(y, tx, ids, "3. GRADIENT DESCENT", cross_validation_flag, least_squares_GD, initial_w=args["initial_w"], max_iters=args["max_iters"], gamma=args["gamma"])
     if(accuracy3 > max_accuracy):
         max_accuracy = accuracy3
         method_name_selected = "GRADIENT DESCENT"
         w_final = w3
 
-    accuracy4, w4 = execute_one_method(y, tx, ids, "4. STOCHASTIC GRADIENT", cross_validation_flag, degree, least_squares_SGD, initial_w=args["initial_w"], max_iters=args["max_iters"], gamma=args["gamma"])
+    accuracy4, w4 = execute_one_method(y, tx, ids, "4. STOCHASTIC GRADIENT", cross_validation_flag, least_squares_SGD, initial_w=args["initial_w"], max_iters=args["max_iters"], gamma=args["gamma"])
     if(accuracy4 > max_accuracy):
         max_accuracy = accuracy4
         method_name_selected = "STOCHASTIC GRADIENT"
         w_final = w4
 
-    accuracy5, w5 = execute_one_method(y, tx, ids, "5. LOGISTIC REGRESSION", cross_validation_flag, degree, logistic_regression, initial_w=args["initial_w"], max_iters=args["max_iters"], gamma=args["gamma"])
+    accuracy5, w5 = execute_one_method(y, tx, ids, "5. LOGISTIC REGRESSION", cross_validation_flag, logistic_regression, initial_w=args["initial_w"], max_iters=args["max_iters"], gamma=args["gamma"])
     if(accuracy5 > max_accuracy):
         max_accuracy = accuracy5
         method_name_selected = "LOGISTIC REGRESSION"
         w_final = w5
 
-    accuracy6, w6 = execute_one_method(y, tx, ids, "6. REGULARIZED LOGISTIC REGRESSION", cross_validation_flag, degree, reg_logistic_regression, initial_w=args["initial_w"], lambda_=args["lambda_"], max_iters=args["max_iters"], gamma=args["gamma"])
+    accuracy6, w6 = execute_one_method(y, tx, ids, "6. REGULARIZED LOGISTIC REGRESSION", cross_validation_flag, reg_logistic_regression, initial_w=args["initial_w"], lambda_=args["lambda_"], max_iters=args["max_iters"], gamma=args["gamma"])
     if(accuracy6 > max_accuracy):
         max_accuracy = accuracy6
         method_name_selected = "REGULARIZED LOGISTIC REGRESSION"
@@ -155,30 +162,23 @@ def execute_all_methods(y, tx, ids, cross_validation_flag, degree, **args):
 
 ################ GENERATE SUBMISSION  ################
 
-def generate_submission(tx0, tx1, tx2, ids0, ids1, ids2, w0, w1, w2, name, degrees):
+def generate_submission(tx0, tx1, tx2, ids0, ids1, ids2, w0, w1, w2, name):
     """ Generate a submission given the 3 subsets of the TEST data (tx_n and ids_n) and the weights generated by the TRAIN dataset.
         Input:
             tx_n: features of test data
             ids_n: event ids of testa data
             w_n: weights generated by train data
             name: name of the file .csv of the submission
-            degrees: degrees for feature augmentation (to pass to build_poly method)
         Output: the file .csv will be generated
     """
     y_test_predicted0 = []
-    test_poly0 = build_poly(tx0, degrees[0])
-    test_poly0 = replace_set_normalize(test_poly0)
-    y_test_predicted0 = predict_labels(w0, test_poly0)
+    y_test_predicted0 = predict_labels(w0, tx0)
 
     y_test_predicted1 = []
-    test_poly1 = build_poly(tx1, degrees[1])
-    test_poly1 = replace_set_normalize(test_poly1)
-    y_test_predicted1 = predict_labels(w1, test_poly1)
+    y_test_predicted1 = predict_labels(w1, tx1)
 
     y_test_predicted2 = []
-    test_poly2 = build_poly(tx2, degrees[2])
-    test_poly2 = replace_set_normalize(test_poly2)
-    y_test_predicted2 = predict_labels(w2, test_poly2)
+    y_test_predicted2 = predict_labels(w2, tx2)
 
     jet_num_0 = np.c_[ids0, y_test_predicted0]
     jet_num_1 = np.c_[ids1, y_test_predicted1]
@@ -188,7 +188,7 @@ def generate_submission(tx0, tx1, tx2, ids0, ids1, ids2, w0, w1, w2, name, degre
     final_pred_list = list(final_pred)
     final_pred_list.sort(key=lambda x:x[0])
     result = np.array(final_pred_list)
-    # create_csv_submission(id_final, result[:, -1], name)
+    create_csv_submission(result[:, 0], result[:, -1], name)
     return result[:, -1]
 
 ################ END GENERATE SUBMISSION  ################

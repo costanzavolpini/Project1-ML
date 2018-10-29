@@ -48,13 +48,6 @@ def cross_validation(y, x, k_indices, k, degree, m, **args):
     x_test = x[test_indice]
     x_train = x[train_indice]
 
-    # form data with polynomial degree
-    tx_train = build_poly(x_train, degree)
-    tx_test = build_poly(x_test, degree)
-
-    tx_train = replace_set_normalize(tx_train)
-    tx_test = replace_set_normalize(tx_test)
-
     # methods used to calculate weights
     loss, w = m(y_train, tx_train, **args)
 

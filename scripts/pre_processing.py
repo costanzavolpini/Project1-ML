@@ -41,6 +41,18 @@ def replace_set_mean(tx):
 
 
 
+def feature_augmented(*txs):
+    tx_aug = []
+    for tx in txs:
+        tx = replace_set_normalize(tx)
+        tx = np.column_stack([tx, np.exp(tx).clip(max=999), np.log(tx - tx.min(0) + 1e-8)])
+        medians = find_median(tx).data
+        mask = tx >= medians
+        tx_aug.append(np.column_stack([tx*mask, tx*~mask]))
+    return tx_aug
+
+
+
 def replace_set_median(tx):
     """ Return a new dataset where missing values are replaced by median
         Input:
@@ -62,7 +74,7 @@ def replace_set_normalize(tx):
             tx: features where missing values are replaced by 0 and normalized
     """
     std_data_tx_with_mask = standardize(clean_array(tx))
-    tx_std_data_replaced_by_0 = replace_missing_values(std_data_tx_with_mask, np.full((30, 1), 0))
+    tx_std_data_replaced_by_0 = replace_missing_values(std_data_tx_with_mask, np.full((tx.shape[0], 1), 0))
     return tx_std_data_replaced_by_0
 
 
