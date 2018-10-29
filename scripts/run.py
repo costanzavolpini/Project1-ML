@@ -25,4 +25,4 @@ tx_test_ = feature_augmented(tx_test_)[0]
 
 # # 5. Generate submission
 y_test_predicted = predict_labels(w, tx_test_)
-create_csv_submission(ids_test_, y_test_predicted, "try")
+create_csv_submission(ids_test_, y_test_predicted, "Submission")
