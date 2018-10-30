@@ -42,6 +42,12 @@ def replace_set_mean(tx):
 
 
 def feature_augmented(*txs):
+    """ Return a new dataset(s) with feature augmented
+        Input:
+            txs: one or more dataset
+        Output:
+            txs: one or more dataset with feature augmented
+    """
     tx_aug = []
     for tx in txs:
         tx = replace_set_normalize(tx)
