@@ -1,8 +1,5 @@
 # HIGGS BOSON PROJECT 1
-
-##################################
-## AUTHORS: Costanza Volpini, Pedro Abranches, Youssef Kitane
-##################################
+**AUTHORS: Costanza Volpini, Pedro Abranches, Youssef Kitane**
 
 ### DESCRIPTION:
 The aim of this project is to be able to build a robust machine learning model that is able to distinguish between background noise and the possible signal from Higgs boson. Machine learning methods were applied to simulate the discovering of the Higgs particle.
